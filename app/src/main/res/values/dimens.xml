@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="login_padding">40dp</dimen>
+    <dimen name="register_padding">40dp</dimen>
+</resources>
