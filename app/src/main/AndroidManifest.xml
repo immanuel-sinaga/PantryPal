@@ -11,26 +11,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PantryPal">
-
+        <activity
+            android:name=".AddActivity"
+            android:exported="false" />
         <activity
             android:name=".RegisterActivity"
-            android:exported="false" />
-
-        <!-- CHANGE 1: This is now the Launcher (Entry Point) -->
+            android:exported="false" /> <!-- CHANGE 1: This is now the Launcher (Entry Point) -->
         <activity
             android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- CHANGE 2: Main Activity is no longer the launcher -->
+        </activity> <!-- CHANGE 2: Main Activity is no longer the launcher -->
         <activity
             android:name=".MainActivity"
             android:exported="false" />
-
     </application>
 
 </manifest>

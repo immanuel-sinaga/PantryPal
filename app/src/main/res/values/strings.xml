@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">PantryPal</string>
+    <string-array name="unit_types">
+        <item>pcs</item>
+        <item>kg</item>
+        <item>g</item>
+        <item>L</item>
+        <item>ml</item>
+    </string-array>
 </resources>

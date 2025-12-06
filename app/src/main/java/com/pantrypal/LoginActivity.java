@@ -15,6 +15,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -99,14 +101,26 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(LoginActivity.this, "Login Successful!", Toast.LENGTH_SHORT).show();
                         navigateToMain();
                     } else {
-                        String errorMessage = task.getException() != null ? task.getException().getMessage() : "Login failed.";
-                        Toast.makeText(LoginActivity.this, "Error: " + errorMessage, Toast.LENGTH_LONG).show();
+                        // --- Get the specific exception ---
+                        Exception exception = task.getException();
+
+                        // Check if the error is "User not found" or "Wrong credentials"
+                        if (exception instanceof FirebaseAuthInvalidUserException ||
+                                exception instanceof FirebaseAuthInvalidCredentialsException) {
+
+                            Toast.makeText(LoginActivity.this, "Email not registered or Password incorrect!", Toast.LENGTH_LONG).show();
+
+                        } else {
+                            // Handle other errors (e.g., Network issues, Too many requests)
+                            String errorMessage = exception != null ? exception.getMessage() : "Login failed.";
+                            Toast.makeText(LoginActivity.this, "Error: " + errorMessage, Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
     }
+
 
     private void navigateToMain() {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);

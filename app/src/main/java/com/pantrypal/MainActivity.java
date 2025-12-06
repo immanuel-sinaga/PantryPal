@@ -14,12 +14,12 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.pantrypal.model.FirestoreManager;
 import com.pantrypal.model.Item;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,9 +29,10 @@ public class MainActivity extends AppCompatActivity {
     private String currentUserId;
 
     // UI Components
-    private EditText etName, etQuantity, etDeleteName; // Added etDeleteName
+    private EditText etDeleteName;
     private TextView tvResults;
-    private Button btnSave, btnLogout, btnDelete; // Added btnDelete
+    private Button btnLogout, btnDelete;
+    private FloatingActionButton fabAdd; // Changed from Button to FAB
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,25 +54,39 @@ public class MainActivity extends AppCompatActivity {
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            int sidePadding = (int) (16 * getResources().getDisplayMetrics().density);
+            int topBottomPadding = (int) (16 * getResources().getDisplayMetrics().density);
+
+            v.setPadding(
+                    systemBars.left + sidePadding,
+                    systemBars.top + topBottomPadding,
+                    systemBars.right + sidePadding,
+                    systemBars.bottom + topBottomPadding
+            );
             return insets;
         });
 
         dbManager = new FirestoreManager();
 
         // 2. Find Views
-        etName = findViewById(R.id.etName);
-        etQuantity = findViewById(R.id.etQuantity);
+        // Note: etName and etQuantity are removed
         tvResults = findViewById(R.id.tvResults);
-        btnSave = findViewById(R.id.btnSave);
         btnLogout = findViewById(R.id.btnLogout);
 
-        // NEW: Find Delete Views
+        // FAB for Adding
+        fabAdd = findViewById(R.id.fabAdd);
+
+        // Delete Views
         etDeleteName = findViewById(R.id.etDeleteName);
         btnDelete = findViewById(R.id.btnDelete);
 
         // 3. Set Click Listeners
-        btnSave.setOnClickListener(v -> saveItem());
+
+        // Navigate to AddActivity when FAB is clicked
+        fabAdd.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AddActivity.class);
+            startActivity(intent);
+        });
 
         btnLogout.setOnClickListener(v -> {
             mAuth.signOut();
@@ -81,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
         });
 
-        // NEW: Delete Listener
+        // Delete Listener
         btnDelete.setOnClickListener(v -> deleteItem());
     }
 
@@ -89,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        // Refresh the list whenever we come back to this screen (e.g., after adding an item)
         loadItems();
     }
 
@@ -98,53 +114,7 @@ public class MainActivity extends AppCompatActivity {
         dbManager.stopListening();
     }
 
-    // --- SAVE ITEM ---
-    private void saveItem() {
-        String name = etName.getText().toString().trim();
-        String qtyStr = etQuantity.getText().toString().trim();
-
-        if (TextUtils.isEmpty(name)) {
-            etName.setError("Name required");
-            return;
-        }
-        if (TextUtils.isEmpty(qtyStr)) {
-            etQuantity.setError("Quantity required");
-            return;
-        }
-
-        int quantity;
-        try {
-            quantity = Integer.parseInt(qtyStr);
-        } catch (NumberFormatException e) {
-            etQuantity.setError("Invalid number");
-            return;
-        }
-
-        Item newItem = new Item(
-                currentUserId,
-                name,
-                quantity,
-                "pcs",
-                LocalDate.now(),
-                LocalDate.now().plusDays(7)
-        );
-
-        dbManager.addItem(newItem, new FirestoreManager.ActionCallback() {
-            @Override
-            public void onSuccess() {
-                Toast.makeText(MainActivity.this, "Saved!", Toast.LENGTH_SHORT).show();
-                etName.setText("");
-                etQuantity.setText("");
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Toast.makeText(MainActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    // --- NEW: DELETE ITEM ---
+    // --- DELETE ITEM ---
     private void deleteItem() {
         String nameToDelete = etDeleteName.getText().toString().trim();
 
@@ -182,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
                             .append(item.getName())
                             .append(" (Qty: ")
                             .append(item.getQuantity())
+                            .append(" ").append(item.getUnit()) // Added Unit display
                             .append(")\n");
                 }
 

@@ -1,7 +1,6 @@
 package com.pantrypal.model;
 
-import com.google.firebase.firestore.Exclude;
-import com.google.firebase.firestore.IgnoreExtraProperties;
+import com.google.firebase.firestore.Exclude;import com.google.firebase.firestore.IgnoreExtraProperties;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -12,7 +11,10 @@ public class Item {
     private String documentId;
     private String userId;
     private String name;
-    private int quantity;
+
+    // CHANGED FROM INT TO DOUBLE
+    private double quantity;
+
     private String unit;
     private String purchaseDate;
     private String expiryDate;
@@ -21,9 +23,9 @@ public class Item {
     public Item() { }
 
     // --- CONSTRUCTOR ---
-    // Removed "int image" from the arguments here
-    public Item(String userId, String name, int quantity, String unit, LocalDate purchaseDate, LocalDate expiryDate) {
-        this.userId = userId; // <--- SET THIS
+    // Updated constructor to accept double for quantity
+    public Item(String userId, String name, double quantity, String unit, LocalDate purchaseDate, LocalDate expiryDate) {
+        this.userId = userId;
         this.name = name;
         this.quantity = quantity;
         this.unit = unit;
@@ -47,8 +49,11 @@ public class Item {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
-    public int getQuantity() { return quantity; }
-    public void setQuantity(int quantity) { this.quantity = quantity; }
+    // Updated Getter to return double
+    public double getQuantity() { return quantity; }
+
+    // Updated Setter to accept double
+    public void setQuantity(double quantity) { this.quantity = quantity; }
 
     public String getUnit() { return unit; }
     public void setUnit(String unit) { this.unit = unit; }
@@ -58,6 +63,7 @@ public class Item {
 
     public String getExpiryDate() { return expiryDate; }
     public void setExpiryDate(String expiryDate) { this.expiryDate = expiryDate; }
+
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
 
