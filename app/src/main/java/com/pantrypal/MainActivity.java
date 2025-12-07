@@ -5,10 +5,12 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -20,6 +22,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.pantrypal.model.FirestoreManager;
 import com.pantrypal.model.Item;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,10 +34,14 @@ public class MainActivity extends AppCompatActivity {
     private String currentUserId;
 
     // UI Components
-    private EditText etDeleteName;
-    private TextView tvResults;
-    private Button btnLogout, btnDelete;
-    private FloatingActionButton fabAdd; // Changed from Button to FAB
+    private ListView listViewItems;
+    private TextView tvEmptyMessage;
+    private Button btnLogout;
+    private FloatingActionButton fabAdd;
+
+    // Adapter and Data
+    private ItemAdapter itemAdapter;
+    private List<Item> itemList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,18 +78,17 @@ public class MainActivity extends AppCompatActivity {
         dbManager = new FirestoreManager();
 
         // 2. Find Views
-        // Note: etName and etQuantity are removed
-        tvResults = findViewById(R.id.tvResults);
+        listViewItems = findViewById(R.id.listViewItems);
+        tvEmptyMessage = findViewById(R.id.tvEmptyMessage);
         btnLogout = findViewById(R.id.btnLogout);
-
-        // FAB for Adding
         fabAdd = findViewById(R.id.fabAdd);
 
-        // Delete Views
-        etDeleteName = findViewById(R.id.etDeleteName);
-        btnDelete = findViewById(R.id.btnDelete);
+        // 3. Initialize List and Adapter
+        itemList = new ArrayList<>();
+        itemAdapter = new ItemAdapter(this, itemList);
+        listViewItems.setAdapter(itemAdapter);
 
-        // 3. Set Click Listeners
+        // 4. Set Click Listeners
 
         // Navigate to AddActivity when FAB is clicked
         fabAdd.setOnClickListener(v -> {
@@ -96,15 +104,26 @@ public class MainActivity extends AppCompatActivity {
             finish();
         });
 
-        // Delete Listener
-        btnDelete.setOnClickListener(v -> deleteItem());
+        // Long press to delete item
+        listViewItems.setOnItemLongClickListener((parent, view, position, id) -> {
+            Item selectedItem = itemList.get(position);
+            showDeleteConfirmation(selectedItem);
+            return true;
+        });
+
+        // Optional: Click to view/edit (you can implement this later)
+        listViewItems.setOnItemClickListener((parent, view, position, id) -> {
+            Item selectedItem = itemList.get(position);
+            Toast.makeText(this, "Clicked: " + selectedItem.getName(), Toast.LENGTH_SHORT).show();
+            // TODO: Open EditActivity here if you create one
+        });
     }
 
     // --- AUTOMATIC UPDATES ---
     @Override
     protected void onResume() {
         super.onResume();
-        // Refresh the list whenever we come back to this screen (e.g., after adding an item)
+        // Refresh the list whenever we come back to this screen
         loadItems();
     }
 
@@ -114,53 +133,59 @@ public class MainActivity extends AppCompatActivity {
         dbManager.stopListening();
     }
 
+    // --- DELETE CONFIRMATION DIALOG ---
+    private void showDeleteConfirmation(Item item) {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Item")
+                .setMessage("Are you sure you want to delete '" + item.getName() + "'?")
+                .setPositiveButton("Delete", (dialog, which) -> deleteItem(item))
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
     // --- DELETE ITEM ---
-    private void deleteItem() {
-        String nameToDelete = etDeleteName.getText().toString().trim();
-
-        if (TextUtils.isEmpty(nameToDelete)) {
-            etDeleteName.setError("Enter item name");
-            return;
-        }
-
-        // Use the Manager to find and delete
-        dbManager.deleteItemByName(currentUserId, nameToDelete, new FirestoreManager.ActionCallback() {
+    private void deleteItem(Item item) {
+        dbManager.deleteItem(item.getDocumentId(), new FirestoreManager.ActionCallback() {
             @Override
             public void onSuccess() {
-                Toast.makeText(MainActivity.this, "Deleted: " + nameToDelete, Toast.LENGTH_SHORT).show();
-                etDeleteName.setText(""); // Clear input
+                Toast.makeText(MainActivity.this, "Deleted: " + item.getName(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(Exception e) {
-                Toast.makeText(MainActivity.this, "Could not delete: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     // --- LOAD ITEMS ---
     private void loadItems() {
-        tvResults.setText("Loading...");
-
         dbManager.startListeningForItems(currentUserId, new FirestoreManager.FirestoreCallback() {
             @Override
             public void onCallback(List<Item> list) {
-                StringBuilder builder = new StringBuilder();
+                itemList.clear();
 
-                for (Item item : list) {
-                    builder.append("• ")
-                            .append(item.getName())
-                            .append(" (Qty: ")
-                            .append(item.getQuantity())
-                            .append(" ").append(item.getUnit()) // Added Unit display
-                            .append(")\n");
-                }
-
-                if (builder.length() == 0) {
-                    tvResults.setText("Your pantry is empty.");
+                if (list.isEmpty()) {
+                    // Show empty message
+                    tvEmptyMessage.setVisibility(android.view.View.VISIBLE);
+                    listViewItems.setVisibility(android.view.View.GONE);
                 } else {
-                    tvResults.setText(builder.toString());
+                    // Sort by expiry date (closest first)
+                    Collections.sort(list, new Comparator<Item>() {
+                        @Override
+                        public int compare(Item i1, Item i2) {
+                            return Long.compare(i1.getDaysUntilExpiry(), i2.getDaysUntilExpiry());
+                        }
+                    });
+
+                    itemList.addAll(list);
+
+                    // Show list
+                    tvEmptyMessage.setVisibility(android.view.View.GONE);
+                    listViewItems.setVisibility(android.view.View.VISIBLE);
                 }
+
+                itemAdapter.notifyDataSetChanged();
             }
         });
     }

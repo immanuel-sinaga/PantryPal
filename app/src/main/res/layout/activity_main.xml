@@ -6,93 +6,82 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#fff8d4"
     android:padding="16dp"
     tools:context=".MainActivity">
 
-    <!-- 1. LOGOUT BUTTON (Top Right) -->
+    <!-- Header with App Name -->
+    <TextView
+        android:id="@+id/tvAppName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/vesperlibre_bold"
+        android:text="My Pantry"
+        android:textColor="#313647"
+        android:textSize="32sp"
+        app:layout_constraintEnd_toStartOf="@+id/btnLogout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Logout Button (Top Right) -->
     <Button
         android:id="@+id/btnLogout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#F44336"
+        android:fontFamily="@font/montserrat_semibold"
         android:text="Logout"
+        android:textAllCaps="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 2. DELETE CONTROLS (Kept for now, moved to top left) -->
-    <TextView
-        android:id="@+id/tvDeleteLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Delete Item:"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/deleteContainer"/>
-
-    <LinearLayout
-        android:id="@+id/deleteContainer"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="4dp"
-        app:layout_constraintTop_toBottomOf="@+id/tvDeleteLabel"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btnLogout"
-        android:layout_marginEnd="8dp">
-
-        <EditText
-            android:id="@+id/etDeleteName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Name to delete"
-            android:textSize="14sp"/>
-
-        <Button
-            android:id="@+id/btnDelete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="#E91E63"
-            android:text="Del"
-            android:minWidth="60dp"/>
-    </LinearLayout>
-
-    <!-- 3. RESULTS LIST (Fills remaining space) -->
-    <TextView
-        android:id="@+id/tvResults"
+    <!-- ListView for Items -->
+    <ListView
+        android:id="@+id/listViewItems"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
-        android:background="#F5F5F5"
-        android:padding="10dp"
-        android:scrollbars="vertical"
-        android:text="Loading items..."
-        android:textSize="16sp"
-        android:gravity="top"
+        android:background="#FFFFFF"
+        android:divider="#E0E0E0"
+        android:dividerHeight="1dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/deleteContainer" />
+        app:layout_constraintTop_toBottomOf="@+id/tvAppName" />
 
-    <!-- 4. NEW: FLOATING ACTION BUTTON (Bottom Right) -->
-    <!-- 4. NEW: FLOATING ACTION BUTTON (Bottom Right) -->
+    <!-- Empty State Message -->
+    <TextView
+        android:id="@+id/tvEmptyMessage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/montserrat_semibold"
+        android:gravity="center"
+        android:text="Your pantry is empty.\nTap + to add items!"
+        android:textAlignment="center"
+        android:textColor="#435663"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvAppName" />
+
+    <!-- Floating Action Button (Add Item) -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:clickable="true"
+        android:contentDescription="Add Item"
         android:focusable="true"
         android:src="@drawable/ic_add"
-        android:contentDescription="Add Item"
-
         app:backgroundTint="#1a2646"
-        app:tint="#fff8d4"
         app:borderWidth="0dp"
-
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="#fff8d4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
