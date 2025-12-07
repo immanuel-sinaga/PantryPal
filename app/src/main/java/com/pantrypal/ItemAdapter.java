@@ -26,6 +26,17 @@ public class ItemAdapter extends ArrayAdapter<Item> {
         this.items = items;
     }
 
+    // Interface for delete callback
+    public interface OnDeleteClickListener {
+        void onDeleteClick(Item item);
+    }
+
+    private OnDeleteClickListener deleteListener;
+
+    public void setOnDeleteClickListener(OnDeleteClickListener listener) {
+        this.deleteListener = listener;
+    }
+
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -41,9 +52,17 @@ public class ItemAdapter extends ArrayAdapter<Item> {
         TextView tvQuantity = listItem.findViewById(R.id.tvItemQuantity);
         TextView tvExpiry = listItem.findViewById(R.id.tvItemExpiry);
         View viewExpiryIndicator = listItem.findViewById(R.id.viewExpiryIndicator);
+        android.widget.ImageButton btnDelete = listItem.findViewById(R.id.btnDeleteItem);
 
         // Set item name
         tvName.setText(currentItem.getName());
+
+        // Handle delete button click
+        btnDelete.setOnClickListener(v -> {
+            if (deleteListener != null) {
+                deleteListener.onDeleteClick(currentItem);
+            }
+        });
 
         // Set quantity with unit
         String quantityText;

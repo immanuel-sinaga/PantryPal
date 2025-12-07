@@ -2,9 +2,7 @@ package com.pantrypal;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,8 +34,6 @@ public class MainActivity extends AppCompatActivity {
     // UI Components
     private ListView listViewItems;
     private TextView tvEmptyMessage;
-    private Button btnLogout;
-    private FloatingActionButton fabAdd;
 
     // Adapter and Data
     private ItemAdapter itemAdapter;
@@ -80,13 +76,16 @@ public class MainActivity extends AppCompatActivity {
         // 2. Find Views
         listViewItems = findViewById(R.id.listViewItems);
         tvEmptyMessage = findViewById(R.id.tvEmptyMessage);
-        btnLogout = findViewById(R.id.btnLogout);
-        fabAdd = findViewById(R.id.fabAdd);
+        Button btnLogout = findViewById(R.id.btnLogout);
+        FloatingActionButton fabAdd = findViewById(R.id.fabAdd);
 
         // 3. Initialize List and Adapter
         itemList = new ArrayList<>();
         itemAdapter = new ItemAdapter(this, itemList);
         listViewItems.setAdapter(itemAdapter);
+
+        // Set up delete listener for the adapter
+        itemAdapter.setOnDeleteClickListener(this::showDeleteConfirmation);
 
         // 4. Set Click Listeners
 

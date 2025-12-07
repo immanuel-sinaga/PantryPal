@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="12dp"
-    android:background="?attr/selectableItemBackground"
-    android:clickable="true"
-    android:focusable="true">
+    android:background="?attr/selectableItemBackground">
 
     <!-- Color indicator on the left -->
     <View
@@ -56,5 +55,17 @@
             android:textSize="14sp" />
 
     </LinearLayout>
+
+    <!-- DELETE BUTTON -->
+    <ImageButton
+        android:id="@+id/btnDeleteItem"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Delete item"
+        android:src="@android:drawable/ic_menu_delete"
+        app:tint="#F44336" />
 
 </LinearLayout>
