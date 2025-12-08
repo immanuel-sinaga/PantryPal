@@ -90,6 +90,7 @@ public class AddActivity extends AppCompatActivity {
 
         // RESTORE PREVIOUS SELECTION
         restoreExpiryPreference();
+        restoreUnitPreference(); // <--- Add this single line
     }
 
     private void initializeViews() {
@@ -132,6 +133,21 @@ public class AddActivity extends AppCompatActivity {
         }
     }
 
+    private void restoreUnitPreference() {
+        String savedUnit = prefs.getString("last_unit", null);
+
+        if (savedUnit != null) {
+            // Loop through spinner items to find the index that matches the saved string
+            for (int i = 0; i < spinnerUnit.getCount(); i++) {
+                if (spinnerUnit.getItemAtPosition(i).toString().equals(savedUnit)) {
+                    spinnerUnit.setSelection(i);
+                    break;
+                }
+            }
+        }
+    }
+
+
     private void saveExpiryPreference(String preference) {
         prefs.edit().putString("expiry_preference", preference).apply();
     }
@@ -159,6 +175,9 @@ public class AddActivity extends AppCompatActivity {
                 if (etQuantity.getText().length() > 0) {
                     etQuantity.setSelection(etQuantity.getText().length());
                 }
+
+                // [NEW] Save the unit preference when changed
+                prefs.edit().putString("last_unit", selectedUnit).apply();
             }
 
             @Override
@@ -181,13 +200,14 @@ public class AddActivity extends AppCompatActivity {
         });
         etDaysFromNow.setOnClickListener(v -> rbDaysFromNow.performClick());
 
-        // --- 3. RADIO BUTTON LOGIC ---
+        // --- 3. RADIO BUTTON LOGIC (ALREADY EXISTS) ---
 
         rbExpiryDate.setOnClickListener(v -> {
             rbExpiryDate.setChecked(true);
             rbDaysFromNow.setChecked(false);
             etDaysFromNow.setText("");
             etDaysFromNow.setError(null);
+            // This line already saves the radio button preference
             saveExpiryPreference("date");
         });
 
@@ -195,11 +215,13 @@ public class AddActivity extends AppCompatActivity {
             rbDaysFromNow.setChecked(true);
             rbExpiryDate.setChecked(false);
             etDaysFromNow.requestFocus();
+            // This line already saves the radio button preference
             saveExpiryPreference("days");
         });
 
         btnAddItem.setOnClickListener(v -> saveItem());
     }
+
 
     private void showDatePicker(TextView targetTextView) {
         Calendar currentSelection = Calendar.getInstance();
