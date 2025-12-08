@@ -38,10 +38,10 @@
     <!-- ListView for Items -->
     <ListView
         android:id="@+id/listViewItems"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="0dp"        android:layout_height="0dp"
         android:layout_marginTop="16dp"
-        android:background="#FFFFFF"
+        android:background="@drawable/rounded_list_bg"
+        android:clipToOutline="true"
         android:divider="#E0E0E0"
         android:dividerHeight="1dp"
         android:visibility="visible"
@@ -49,6 +49,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvAppName" />
+
 
     <!-- Empty State Message -->
     <TextView
