@@ -21,6 +21,14 @@
         android:textColor="#313647"
         android:textSize="50dp" />
 
+    <!-- LOGO IMAGE -->
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginBottom="20dp"
+        android:contentDescription="PantryPal Logo"
+        android:src="@drawable/logo_pantrypal" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -42,8 +50,7 @@
         android:hint="Email"
         android:inputType="textEmailAddress" />
 
-    <!-- Password Input with Toggle (UPDATED) -->
-    <!-- We wrap the input in a Layout that handles the Eye Icon logic -->
+    <!-- Password Input with Toggle -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
