@@ -14,6 +14,9 @@
             android:name=".AddActivity"
             android:exported="false" />
         <activity
+            android:name=".ProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".RegisterActivity"
             android:exported="false" /> <!-- CHANGE 1: This is now the Launcher (Entry Point) -->
         <activity

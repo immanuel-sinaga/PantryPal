@@ -19,26 +19,29 @@
         android:text="My Pantry"
         android:textColor="#313647"
         android:textSize="32sp"
-        app:layout_constraintEnd_toStartOf="@+id/btnLogout"
+        app:layout_constraintEnd_toStartOf="@+id/btnProfile"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Logout Button (Top Right) -->
-    <Button
-        android:id="@+id/btnLogout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#F44336"
-        android:fontFamily="@font/montserrat_semibold"
-        android:text="Logout"
-        android:textAllCaps="false"
+    <!-- Profile Button (Top Right) - Changed from Logout -->
+    <ImageButton
+        android:id="@+id/btnProfile"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Profile"
+        android:src="@drawable/ic_account"
+        android:scaleType="fitCenter"
+        android:padding="8dp"
+        app:tint="#1a2646"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- ListView for Items -->
     <ListView
         android:id="@+id/listViewItems"
-        android:layout_width="0dp"        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/rounded_list_bg"
         android:clipToOutline="true"
@@ -49,7 +52,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvAppName" />
-
 
     <!-- Empty State Message -->
     <TextView

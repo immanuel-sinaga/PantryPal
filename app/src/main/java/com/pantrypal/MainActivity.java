@@ -2,7 +2,7 @@ package com.pantrypal;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     // UI Components
     private ListView listViewItems;
     private TextView tvEmptyMessage;
+    private ImageButton btnProfile; // Changed from Button to ImageButton
 
     // Adapter and Data
     private ItemAdapter itemAdapter;
@@ -76,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         // 2. Find Views
         listViewItems = findViewById(R.id.listViewItems);
         tvEmptyMessage = findViewById(R.id.tvEmptyMessage);
-        Button btnLogout = findViewById(R.id.btnLogout);
+        btnProfile = findViewById(R.id.btnProfile); // Changed from btnLogout
         FloatingActionButton fabAdd = findViewById(R.id.fabAdd);
 
         // 3. Initialize List and Adapter
@@ -95,12 +96,10 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        btnLogout.setOnClickListener(v -> {
-            mAuth.signOut();
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        // Navigate to Profile Activity
+        btnProfile.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(intent);
-            finish();
         });
 
         // Long press to delete item
