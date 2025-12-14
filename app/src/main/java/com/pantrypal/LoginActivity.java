@@ -29,15 +29,15 @@ public class LoginActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
-        // 1. Initialize Firebase Auth
+        // Firebase Setup
         mAuth = FirebaseAuth.getInstance();
 
-        // 2. Check if user is ALREADY logged in
+        // Auth Check
         if (mAuth.getCurrentUser() != null) {
             navigateToMain();
         }
 
-        // 3. Handle Window Insets
+        // Window Insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             int padding = 40;
@@ -50,23 +50,20 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
 
-        // 4. Initialize UI Elements
+        // UI Initialization
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         Button btnLogin = findViewById(R.id.btnLogin);
         TextView tvRegister = findViewById(R.id.tvRegister);
-
-        // --- NEW: Find Forgot Password text ---
         TextView tvForgotPassword = findViewById(R.id.tvForgotPassword);
 
-        // 5. Set Click Listeners
+        // Event Listeners
         btnLogin.setOnClickListener(v -> loginUser());
 
         tvRegister.setOnClickListener(v -> {
             startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
         });
 
-        // --- NEW: Forgot Password Click Listener ---
         tvForgotPassword.setOnClickListener(v -> {
             Toast.makeText(LoginActivity.this, "Coming soon!", Toast.LENGTH_SHORT).show();
         });
@@ -76,51 +73,46 @@ public class LoginActivity extends AppCompatActivity {
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
-        // 1. Check if Email is Empty
+        // Input Validation
         if (TextUtils.isEmpty(email)) {
             etEmail.setError("Email is required");
             etEmail.requestFocus();
             return;
         }
 
-        // 2. Check if Email is valid format
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             etEmail.setError("Please enter a valid email");
             etEmail.requestFocus();
             return;
         }
 
-        // 3. Check if Password is Empty
         if (TextUtils.isEmpty(password)) {
             etPassword.setError("Password is required");
             etPassword.requestFocus();
             return;
         }
 
-        // Attempt Login with Firebase
+        // Firebase Authentication
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         navigateToMain();
                     } else {
-                        // --- Get the specific exception ---
+                        // Error Handling
                         Exception exception = task.getException();
 
-                        // Check if the error is "User not found" or "Wrong credentials"
                         if (exception instanceof FirebaseAuthInvalidUserException ||
                                 exception instanceof FirebaseAuthInvalidCredentialsException) {
 
                             Toast.makeText(LoginActivity.this, "Email not registered or Password incorrect!", Toast.LENGTH_LONG).show();
 
                         } else {
-                            // Handle other errors (e.g., Network issues, Too many requests)
                             String errorMessage = exception != null ? exception.getMessage() : "Login failed.";
                             Toast.makeText(LoginActivity.this, "Error: " + errorMessage, Toast.LENGTH_LONG).show();
                         }
                     }
                 });
     }
-
 
     private void navigateToMain() {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);

@@ -12,7 +12,7 @@
     android:paddingRight="40dp"
     tools:context=".AddActivity">
 
-    <!-- Top Bar with Close Button -->
+    <!-- Header Section -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,7 +30,6 @@
 
     </RelativeLayout>
 
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -44,6 +43,7 @@
             android:orientation="vertical"
             android:paddingTop="40dp">
 
+            <!-- Title Section -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
                 android:textColor="#435663"
                 android:textSize="25dp" />
 
-            <!-- Item Name -->
+            <!-- Item Name Section -->
             <EditText
                 android:id="@+id/etItemName"
                 android:layout_width="match_parent"
@@ -80,7 +80,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- Quantity Row -->
+                <!-- Quantity Section -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -108,7 +108,7 @@
 
                 </LinearLayout>
 
-                <!-- Unit Row -->
+                <!-- Unit Section -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -124,7 +124,6 @@
                         android:textColor="#435663"
                         android:textSize="16sp" />
 
-                    <!-- IMPORTANT: Make sure @array/unit_types exists in strings.xml -->
                     <Spinner
                         android:id="@+id/spinnerUnit"
                         android:layout_width="match_parent"
@@ -136,7 +135,7 @@
 
                 </LinearLayout>
 
-                <!-- Purchase Date Row -->
+                <!-- Purchase Date Section -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -183,7 +182,7 @@
 
                 </LinearLayout>
 
-                <!-- Expiry Header -->
+                <!-- Expiry Date Section -->
                 <TextView
                     android:id="@+id/lblExpiryHeader"
                     android:layout_width="match_parent"
@@ -200,7 +199,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <!-- Option 1: Days From Now (MOVED UP) -->
+                    <!-- Expiry Option: Days from Now -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -238,7 +237,7 @@
                             android:textColorHint="#435663" />
                     </LinearLayout>
 
-                    <!-- Option 2: Specific Date (MOVED DOWN) -->
+                    <!-- Expiry Option: Specific Date -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -294,6 +293,7 @@
         </LinearLayout>
     </ScrollView>
 
+    <!-- Footer Action Button -->
     <Button
         android:id="@+id/btnAddItem"
         android:layout_width="match_parent"

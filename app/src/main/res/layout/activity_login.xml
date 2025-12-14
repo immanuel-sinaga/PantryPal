@@ -12,6 +12,7 @@
     android:paddingRight="40dp"
     tools:context=".LoginActivity">
 
+    <!-- Header Section -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,7 +22,6 @@
         android:textColor="#313647"
         android:textSize="50dp" />
 
-    <!-- LOGO IMAGE -->
     <ImageView
         android:layout_width="120dp"
         android:layout_height="120dp"
@@ -39,7 +39,7 @@
         android:textColor="#435663"
         android:textSize="20dp" />
 
-    <!-- Email Input -->
+    <!-- Input Section -->
     <EditText
         android:id="@+id/etEmail"
         android:layout_width="match_parent"
@@ -50,7 +50,6 @@
         android:hint="Email"
         android:inputType="textEmailAddress" />
 
-    <!-- Password Input with Toggle -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -70,6 +69,7 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Action Section -->
     <TextView
         android:id="@+id/tvForgotPassword"
         android:layout_width="match_parent"
@@ -81,7 +81,6 @@
         android:textColor="#435663"
         android:textSize="16dp" />
 
-    <!-- Login Button -->
     <Button
         android:id="@+id/btnLogin"
         android:layout_width="match_parent"
@@ -94,6 +93,7 @@
         android:textColor="#fff8d4"
         android:textSize="25dp" />
 
+    <!-- Footer Section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -30,19 +30,19 @@ public class RegisterActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register);
 
-        // 1. Initialize Firebase Auth
+        // Firebase Initialization
         mAuth = FirebaseAuth.getInstance();
 
-        // 2. Handle Window Insets
+        // Window Configuration
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
 
-            // Only fetch dimen if it exists, otherwise fallback to 40dp
+            // Dimension Retrieval
             int padding = 40;
             try {
                 padding = getResources().getDimensionPixelSize(R.dimen.register_padding);
             } catch (Exception e) {
-                // Resource not found, stick to default
+                // Default Fallback
             }
 
             v.setPadding(
@@ -54,7 +54,7 @@ public class RegisterActivity extends AppCompatActivity {
             return insets;
         });
 
-        // 3. Find Views
+        // View Bindings
         edtName = findViewById(R.id.edtName);
         edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
@@ -62,11 +62,11 @@ public class RegisterActivity extends AppCompatActivity {
         Button btnRegister = findViewById(R.id.btnRegister);
         TextView tvLogin = findViewById(R.id.tvLogin);
 
-        // 4. Set Listeners
+        // Event Listeners
         btnRegister.setOnClickListener(v -> registerUser());
 
         tvLogin.setOnClickListener(v -> {
-            // Go back to Login Activity
+            // Navigation
             finish();
         });
     }
@@ -77,16 +77,16 @@ public class RegisterActivity extends AppCompatActivity {
         String password = edtPassword.getText().toString().trim();
         String confirmPassword = edtConfirmPassword.getText().toString().trim();
 
-        // --- VALIDATION ---
+        // Validation Section
 
-        // 1. Validate Name
+        // Name Validation
         if (TextUtils.isEmpty(name)) {
             edtName.setError("Name is required");
             edtName.requestFocus();
             return;
         }
 
-        // 2. Validate Email (Empty & Format)
+        // Email Validation
         if (TextUtils.isEmpty(email)) {
             edtEmail.setError("Email is required");
             edtEmail.requestFocus();
@@ -98,35 +98,35 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        // 3. Validate Password
+        // Password Validation
         if (TextUtils.isEmpty(password)) {
             edtPassword.setError("Password is required");
             edtPassword.requestFocus();
             return;
         }
 
-        // --- ADDED: Minimum 8 Characters Check ---
+        // Password Constraints
         if (password.length() < 8) {
             edtPassword.setError("Password must be at least 8 characters long");
             edtPassword.requestFocus();
             return;
         }
 
-        // 4. Validate Confirmation
+        // Confirmation Check
         if (!password.equals(confirmPassword)) {
             edtConfirmPassword.setError("Passwords do not match");
             edtConfirmPassword.requestFocus();
             return;
         }
 
-        // --- CREATE ACCOUNT ---
+        // Account Creation
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        // Account created successfully!
+                        // Success Handling
                         FirebaseUser user = mAuth.getCurrentUser();
 
-                        // Optional: Update the user's profile with their Name
+                        // Profile Update
                         if (user != null) {
                             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                     .setDisplayName(name)
@@ -138,7 +138,7 @@ public class RegisterActivity extends AppCompatActivity {
                         navigateToMain();
 
                     } else {
-                        // Registration failed
+                        // Error Handling
                         String errorMessage = task.getException() != null ? task.getException().getMessage() : "Registration failed.";
                         Toast.makeText(RegisterActivity.this, "Error: " + errorMessage, Toast.LENGTH_LONG).show();
                     }
@@ -147,7 +147,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void navigateToMain() {
         Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-        // clearTask/newTask prevents user from going back to register screen
+        // Navigation Flags
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();

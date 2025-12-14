@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton; // 1. Import ImageButton
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -36,7 +36,7 @@ import java.util.Locale;
 
 public class AddActivity extends AppCompatActivity {
 
-    // UI Components
+    // --------------- UI COMPONENTS ---------------
     private EditText etItemName, etQuantity, etDaysFromNow;
     private Spinner spinnerUnit;
     private TextView tvPurchaseDate, tvExpiryDateValue;
@@ -44,14 +44,14 @@ public class AddActivity extends AppCompatActivity {
     private RadioButton rbExpiryDate, rbDaysFromNow;
     private LinearLayout containerExpiryDate;
     private Button btnAddItem;
-    private ImageButton btnClose; // 2. Declare the Close Button
+    private ImageButton btnClose;
 
-    // Firebase & Helpers
+    // --------------- FIREBASE & HELPERS ---------------
     private FirebaseAuth mAuth;
     private FirestoreManager firestoreManager;
-    private SharedPreferences prefs; // To save settings
+    private SharedPreferences prefs;
 
-    // Date Formatters
+    // --------------- DATE FORMATTERS ---------------
     private final java.text.SimpleDateFormat uiDateFormat = new java.text.SimpleDateFormat("MMM d, yyyy", Locale.getDefault());
     private final DateTimeFormatter localDateFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.getDefault());
 
@@ -61,25 +61,22 @@ public class AddActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_add);
 
+        // --------------- WINDOW INSETS & PADDING ---------------
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
 
-            // Define the extra padding (matching your LoginActivity logic)
             int padding = 40;
             try {
-                // Tries to get the dimension if it exists, otherwise sticks to 40
                 padding = getResources().getDimensionPixelSize(R.dimen.login_padding);
             } catch (Exception e) {
-                // If the resource is missing, we stick to the default 40
+                // Fallback to default
             }
 
-            // Apply: System Insets + Your Custom Padding
             v.setPadding(systemBars.left + padding, systemBars.top, systemBars.right + padding, systemBars.bottom);
-
             return insets;
         });
 
-        // Initialize Firebase & Prefs
+        // --------------- INITIALIZATION ---------------
         mAuth = FirebaseAuth.getInstance();
         firestoreManager = new FirestoreManager();
         prefs = getSharedPreferences("PantryPalPrefs", Context.MODE_PRIVATE);
@@ -88,9 +85,9 @@ public class AddActivity extends AppCompatActivity {
         setDefaultDates();
         setupListeners();
 
-        // RESTORE PREVIOUS SELECTION
+        // --------------- RESTORE PREFERENCES ---------------
         restoreExpiryPreference();
-        restoreUnitPreference(); // <--- Add this single line
+        restoreUnitPreference();
     }
 
     private void initializeViews() {
@@ -108,8 +105,6 @@ public class AddActivity extends AppCompatActivity {
         etDaysFromNow = findViewById(R.id.etDaysFromNow);
 
         btnAddItem = findViewById(R.id.btnAddItem);
-
-        // 3. Find the button by ID
         btnClose = findViewById(R.id.btnClose);
     }
 
@@ -121,7 +116,6 @@ public class AddActivity extends AppCompatActivity {
     }
 
     private void restoreExpiryPreference() {
-        // Default to "days" if nothing saved, or check what was saved
         String preferredOption = prefs.getString("expiry_preference", "days");
 
         if (preferredOption.equals("date")) {
@@ -137,7 +131,6 @@ public class AddActivity extends AppCompatActivity {
         String savedUnit = prefs.getString("last_unit", null);
 
         if (savedUnit != null) {
-            // Loop through spinner items to find the index that matches the saved string
             for (int i = 0; i < spinnerUnit.getCount(); i++) {
                 if (spinnerUnit.getItemAtPosition(i).toString().equals(savedUnit)) {
                     spinnerUnit.setSelection(i);
@@ -147,7 +140,6 @@ public class AddActivity extends AppCompatActivity {
         }
     }
 
-
     private void saveExpiryPreference(String preference) {
         prefs.edit().putString("expiry_preference", preference).apply();
     }
@@ -155,28 +147,25 @@ public class AddActivity extends AppCompatActivity {
     private void setupListeners() {
         tvPurchaseDate.setOnClickListener(v -> showDatePicker(tvPurchaseDate));
 
-        // 4. Close Activity Logic
+        // --------------- NAVIGATION ---------------
         btnClose.setOnClickListener(v -> finish());
 
-        // --- 1. UNIT SPINNER LOGIC (WHOLE VS DECIMAL) ---
+        // --------------- UNIT SPINNER LOGIC ---------------
         spinnerUnit.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedUnit = parent.getItemAtPosition(position).toString();
 
-                // If "pcs" is selected, force integer input. Otherwise allow decimals.
                 if (selectedUnit.equalsIgnoreCase("pcs")) {
                     etQuantity.setInputType(InputType.TYPE_CLASS_NUMBER);
                 } else {
                     etQuantity.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                 }
 
-                // Move cursor to the end if user was already typing
                 if (etQuantity.getText().length() > 0) {
                     etQuantity.setSelection(etQuantity.getText().length());
                 }
 
-                // [NEW] Save the unit preference when changed
                 prefs.edit().putString("last_unit", selectedUnit).apply();
             }
 
@@ -184,15 +173,12 @@ public class AddActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) { }
         });
 
-        // --- 2. AUTO-SELECT EXPIRY LOGIC ---
-
-        // If user clicks the Date Container -> Select Date Radio & Show Picker
+        // --------------- AUTO-SELECT EXPIRY LOGIC ---------------
         containerExpiryDate.setOnClickListener(v -> {
             rbExpiryDate.performClick();
             showDatePicker(tvExpiryDateValue);
         });
 
-        // If user focuses on or clicks the Days input -> Select Days Radio
         etDaysFromNow.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
                 rbDaysFromNow.performClick();
@@ -200,14 +186,12 @@ public class AddActivity extends AppCompatActivity {
         });
         etDaysFromNow.setOnClickListener(v -> rbDaysFromNow.performClick());
 
-        // --- 3. RADIO BUTTON LOGIC (ALREADY EXISTS) ---
-
+        // --------------- RADIO BUTTON LOGIC ---------------
         rbExpiryDate.setOnClickListener(v -> {
             rbExpiryDate.setChecked(true);
             rbDaysFromNow.setChecked(false);
             etDaysFromNow.setText("");
             etDaysFromNow.setError(null);
-            // This line already saves the radio button preference
             saveExpiryPreference("date");
         });
 
@@ -215,7 +199,6 @@ public class AddActivity extends AppCompatActivity {
             rbDaysFromNow.setChecked(true);
             rbExpiryDate.setChecked(false);
             etDaysFromNow.requestFocus();
-            // This line already saves the radio button preference
             saveExpiryPreference("days");
         });
 
@@ -262,7 +245,7 @@ public class AddActivity extends AppCompatActivity {
         LocalDate purchaseDateObj;
         LocalDate expiryDateObj;
 
-        // --- VALIDATION START ---
+        // --------------- INPUT VALIDATION ---------------
         if (TextUtils.isEmpty(name)) {
             etItemName.setError("Item name required");
             etItemName.requestFocus();
@@ -275,7 +258,7 @@ public class AddActivity extends AppCompatActivity {
             return;
         }
 
-        // Validate Quantity Number
+        // --------------- QUANTITY VALIDATION ---------------
         double quantityVal;
         try {
             quantityVal = Double.parseDouble(quantityStr);
@@ -286,7 +269,6 @@ public class AddActivity extends AppCompatActivity {
                 return;
             }
 
-            // If unit is "pcs", check if it is a whole number (prevent 1.5 pcs)
             if (unit.equalsIgnoreCase("pcs")) {
                 if (quantityVal % 1 != 0) {
                     etQuantity.setError("Pieces must be whole numbers");
@@ -300,7 +282,7 @@ public class AddActivity extends AppCompatActivity {
             return;
         }
 
-        // Validate Purchase Date
+        // --------------- DATE VALIDATION ---------------
         try {
             purchaseDateObj = LocalDate.parse(purchaseDateStr, localDateFormatter);
         } catch (Exception e) {
@@ -308,7 +290,7 @@ public class AddActivity extends AppCompatActivity {
             return;
         }
 
-        // Calculate & Validate Expiry
+        // --------------- EXPIRY VALIDATION ---------------
         try {
             if (rbExpiryDate.isChecked()) {
                 String expiryStr = tvExpiryDateValue.getText().toString();
@@ -327,16 +309,12 @@ public class AddActivity extends AppCompatActivity {
             etDaysFromNow.setError("Invalid input");
             return;
         }
-        // --- VALIDATION END ---
 
-        // Create Item (Ensure your Item.java constructor accepts 'double' for quantity, or cast to int if strictly int)
-        // If Item.java only accepts int, use: (int) quantityVal
-        // Ideally, update Item.java to use double for flexibility.
-
+        // --------------- SAVE TO FIRESTORE ---------------
         Item newItem = new Item(
                 currentUser.getUid(),
                 name,
-                quantityVal, // Using the double value we parsed
+                quantityVal,
                 unit,
                 purchaseDateObj,
                 expiryDateObj

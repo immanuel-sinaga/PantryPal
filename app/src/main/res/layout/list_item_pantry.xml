@@ -7,7 +7,7 @@
     android:padding="12dp"
     android:background="?attr/selectableItemBackground">
 
-    <!-- Color indicator on the left -->
+    <!-- INDICATOR -->
     <View
         android:id="@+id/viewExpiryIndicator"
         android:layout_width="6dp"
@@ -15,14 +15,14 @@
         android:layout_marginEnd="12dp"
         android:background="@android:color/holo_green_dark" />
 
-    <!-- Item details -->
+    <!-- INFO -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <!-- Item Name -->
+        <!-- NAME -->
         <TextView
             android:id="@+id/tvItemName"
             android:layout_width="wrap_content"
@@ -32,7 +32,7 @@
             android:textColor="#313647"
             android:textSize="18sp" />
 
-        <!-- Quantity -->
+        <!-- QUANTITY -->
         <TextView
             android:id="@+id/tvItemQuantity"
             android:layout_width="wrap_content"
@@ -43,7 +43,7 @@
             android:textColor="#435663"
             android:textSize="14sp" />
 
-        <!-- Expiry Info -->
+        <!-- EXPIRY -->
         <TextView
             android:id="@+id/tvItemExpiry"
             android:layout_width="wrap_content"
@@ -56,7 +56,7 @@
 
     </LinearLayout>
 
-    <!-- DELETE BUTTON -->
+    <!-- ACTION -->
     <ImageButton
         android:id="@+id/btnDeleteItem"
         android:layout_width="40dp"

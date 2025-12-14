@@ -1,29 +1,27 @@
 package com.pantrypal.model;
 
-import com.google.firebase.firestore.Exclude;import com.google.firebase.firestore.IgnoreExtraProperties;
+import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.IgnoreExtraProperties;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 @IgnoreExtraProperties
 public class Item {
+
+    // --- FIELDS ---
     @Exclude
     private String documentId;
     private String userId;
     private String name;
-
-    // CHANGED FROM INT TO DOUBLE
     private double quantity;
-
     private String unit;
     private String purchaseDate;
     private String expiryDate;
 
-    // --- EMPTY CONSTRUCTOR (Required by Firestore) ---
+    // --- CONSTRUCTORS ---
     public Item() { }
 
-    // --- CONSTRUCTOR ---
-    // Updated constructor to accept double for quantity
     public Item(String userId, String name, double quantity, String unit, LocalDate purchaseDate, LocalDate expiryDate) {
         this.userId = userId;
         this.name = name;
@@ -33,7 +31,7 @@ public class Item {
         this.expiryDate = (expiryDate != null) ? expiryDate.toString() : null;
     }
 
-    // --- LOGIC ---
+    // --- BUSINESS LOGIC ---
     @Exclude
     public long getDaysUntilExpiry() {
         LocalDate expiry = getExpiryDateAsLocal();
@@ -49,10 +47,7 @@ public class Item {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
-    // Updated Getter to return double
     public double getQuantity() { return quantity; }
-
-    // Updated Setter to accept double
     public void setQuantity(double quantity) { this.quantity = quantity; }
 
     public String getUnit() { return unit; }
@@ -67,11 +62,12 @@ public class Item {
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
 
-    // --- DATE HELPERS ---
+    // --- HELPER METHODS ---
     @Exclude
     public LocalDate getPurchaseDateAsLocal() {
         return (purchaseDate == null || purchaseDate.isEmpty()) ? null : LocalDate.parse(purchaseDate);
     }
+
     @Exclude
     public LocalDate getExpiryDateAsLocal() {
         return (expiryDate == null || expiryDate.isEmpty()) ? null : LocalDate.parse(expiryDate);

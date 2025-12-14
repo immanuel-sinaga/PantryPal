@@ -10,7 +10,7 @@
     android:padding="16dp"
     tools:context=".MainActivity">
 
-    <!-- Header with App Name -->
+    <!-- Header -->
     <TextView
         android:id="@+id/tvAppName"
         android:layout_width="0dp"
@@ -23,7 +23,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Profile Button (Top Right) - Changed from Logout -->
+    <!-- Profile Button -->
     <ImageButton
         android:id="@+id/btnProfile"
         android:layout_width="48dp"
@@ -37,7 +37,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- ListView for Items -->
+    <!-- Item List -->
     <ListView
         android:id="@+id/listViewItems"
         android:layout_width="0dp"
@@ -53,7 +53,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvAppName" />
 
-    <!-- Empty State Message -->
+    <!-- Empty State -->
     <TextView
         android:id="@+id/tvEmptyMessage"
         android:layout_width="0dp"
@@ -71,7 +71,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvAppName" />
 
-    <!-- Floating Action Button (Add Item) -->
+    <!-- Add Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAdd"
         android:layout_width="wrap_content"

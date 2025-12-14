@@ -13,13 +13,14 @@ public class FirestoreManager {
 
     private final FirebaseFirestore db;
     private final String COLLECTION_NAME = "pantry";
-    private ListenerRegistration listenerRegistration; // To stop listening when app closes
+    private ListenerRegistration listenerRegistration;
 
     public FirestoreManager() {
         db = FirebaseFirestore.getInstance();
     }
 
-    // --- CALLBACK INTERFACES ---
+    // Interfaces
+
     public interface FirestoreCallback {
         void onCallback(List<Item> list);
     }
@@ -29,7 +30,8 @@ public class FirestoreManager {
         void onFailure(Exception e);
     }
 
-    // --- 1. ADD ITEM ---
+    // Add Item
+
     public void addItem(Item item, ActionCallback callback) {
         db.collection(COLLECTION_NAME)
                 .add(item)
@@ -43,20 +45,18 @@ public class FirestoreManager {
                 });
     }
 
-    // --- 2. GET ITEMS (Filtered by User ID) ---
-    // UPDATED: Now requires a userId to know whose data to load
+    // Get Items
+
     public void startListeningForItems(String userId, FirestoreCallback callback) {
-        // Safety check: If no user ID is passed, don't load anything
         if (userId == null || userId.isEmpty()) {
             Log.w("Firestore", "No User ID provided. Cannot load items.");
             return;
         }
 
-        // Stop any previous listener to avoid duplicates
         stopListening();
 
         listenerRegistration = db.collection(COLLECTION_NAME)
-                .whereEqualTo("userId", userId) // <--- THIS FILTERS THE DATA
+                .whereEqualTo("userId", userId)
                 .addSnapshotListener((value, error) -> {
                     if (error != null) {
                         Log.w("Firestore", "Listen failed.", error);
@@ -79,7 +79,8 @@ public class FirestoreManager {
                 });
     }
 
-    // Call this in Activity's onDestroy() or onPause()
+    // Stop Listening
+
     public void stopListening() {
         if (listenerRegistration != null) {
             listenerRegistration.remove();
@@ -87,7 +88,8 @@ public class FirestoreManager {
         }
     }
 
-    // --- 3. DELETE ITEM ---
+    // Delete Item
+
     public void deleteItem(String documentId, ActionCallback callback) {
         db.collection(COLLECTION_NAME).document(documentId)
                 .delete()
@@ -99,7 +101,8 @@ public class FirestoreManager {
                 });
     }
 
-    // --- 4. UPDATE ITEM ---
+    // Update Item
+
     public void updateItemQuantity(String documentId, int newQuantity, ActionCallback callback) {
         db.collection(COLLECTION_NAME).document(documentId)
                 .update("quantity", newQuantity)
@@ -111,8 +114,8 @@ public class FirestoreManager {
                 });
     }
 
-    // --- 5. DELETE BY NAME (New Method) ---
-    // This finds the item ID by name, then deletes it
+    // Delete Item By Name
+
     public void deleteItemByName(String userId, String itemName, ActionCallback callback) {
         db.collection(COLLECTION_NAME)
                 .whereEqualTo("userId", userId)
@@ -120,12 +123,9 @@ public class FirestoreManager {
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     if (!querySnapshot.isEmpty()) {
-                        // Found it! Get the ID of the first match
                         String docId = querySnapshot.getDocuments().get(0).getId();
-                        // Delegate to the standard delete method
                         deleteItem(docId, callback);
                     } else {
-                        // No item found with that name
                         callback.onFailure(new Exception("Item not found"));
                     }
                 })

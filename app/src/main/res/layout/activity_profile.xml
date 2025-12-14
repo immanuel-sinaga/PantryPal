@@ -12,7 +12,7 @@
     android:paddingRight="40dp"
     tools:context=".ProfileActivity">
 
-    <!-- Top Bar with Close Button -->
+    <!-- SECTION: TOP BAR -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -43,6 +43,7 @@
             android:orientation="vertical"
             android:paddingTop="20dp">
 
+            <!-- SECTION: HEADER -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -62,7 +63,7 @@
                 android:textColor="#435663"
                 android:textSize="25dp" />
 
-            <!-- Profile Info Card -->
+            <!-- SECTION: PROFILE INFORMATION -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -101,7 +102,7 @@
 
             </LinearLayout>
 
-            <!-- Update Name Section -->
+            <!-- SECTION: UPDATE NAME -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -135,7 +136,7 @@
                 android:textColor="#fff8d4"
                 android:textSize="16dp" />
 
-            <!-- Update Password Section -->
+            <!-- SECTION: UPDATE PASSWORD -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -215,7 +216,7 @@
                 android:textColor="#fff8d4"
                 android:textSize="16dp" />
 
-            <!-- Danger Zone -->
+            <!-- SECTION: ACCOUNT ACTIONS -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

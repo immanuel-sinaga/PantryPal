@@ -27,16 +27,17 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    // --- FIREBASE & DATA ---
     private FirestoreManager dbManager;
     private FirebaseAuth mAuth;
     private String currentUserId;
 
-    // UI Components
+    // --- UI COMPONENTS ---
     private ListView listViewItems;
     private TextView tvEmptyMessage;
-    private ImageButton btnProfile; // Changed from Button to ImageButton
+    private ImageButton btnProfile;
 
-    // Adapter and Data
+    // --- ADAPTER & DATA LIST ---
     private ItemAdapter itemAdapter;
     private List<Item> itemList;
 
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        // --- 1. AUTH CHECK ---
+        // --- AUTHENTICATION CHECK ---
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
         currentUserId = currentUser.getUid();
 
+        // --- UI CONFIGURATION ---
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             int sidePadding = (int) (16 * getResources().getDisplayMetrics().density);
@@ -74,54 +76,41 @@ public class MainActivity extends AppCompatActivity {
 
         dbManager = new FirestoreManager();
 
-        // 2. Find Views
+        // --- VIEW INITIALIZATION ---
         listViewItems = findViewById(R.id.listViewItems);
         tvEmptyMessage = findViewById(R.id.tvEmptyMessage);
-        btnProfile = findViewById(R.id.btnProfile); // Changed from btnLogout
+        btnProfile = findViewById(R.id.btnProfile);
         FloatingActionButton fabAdd = findViewById(R.id.fabAdd);
 
-        // 3. Initialize List and Adapter
+        // --- ADAPTER SETUP ---
         itemList = new ArrayList<>();
         itemAdapter = new ItemAdapter(this, itemList);
         listViewItems.setAdapter(itemAdapter);
 
-        // Set up delete listener for the adapter
         itemAdapter.setOnDeleteClickListener(this::showDeleteConfirmation);
 
-        // 4. Set Click Listeners
-
-        // Navigate to AddActivity when FAB is clicked
+        // --- EVENT LISTENERS ---
         fabAdd.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, AddActivity.class);
             startActivity(intent);
         });
 
-        // Navigate to Profile Activity
         btnProfile.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(intent);
         });
 
-        // Long press to delete item
         listViewItems.setOnItemLongClickListener((parent, view, position, id) -> {
             Item selectedItem = itemList.get(position);
             showDeleteConfirmation(selectedItem);
             return true;
         });
-
-        // Optional: Click to view/edit (you can implement this later)
-        listViewItems.setOnItemClickListener((parent, view, position, id) -> {
-            Item selectedItem = itemList.get(position);
-            Toast.makeText(this, "Clicked: " + selectedItem.getName(), Toast.LENGTH_SHORT).show();
-            // TODO: Open EditActivity here if you create one
-        });
     }
 
-    // --- AUTOMATIC UPDATES ---
+    // --- LIFECYCLE CALLBACKS ---
     @Override
     protected void onResume() {
         super.onResume();
-        // Refresh the list whenever we come back to this screen
         loadItems();
     }
 
@@ -131,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         dbManager.stopListening();
     }
 
-    // --- DELETE CONFIRMATION DIALOG ---
+    // --- DIALOG HELPERS ---
     private void showDeleteConfirmation(Item item) {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Item")
@@ -141,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
-    // --- DELETE ITEM ---
+    // --- DATABASE OPERATIONS ---
     private void deleteItem(Item item) {
         dbManager.deleteItem(item.getDocumentId(), new FirestoreManager.ActionCallback() {
             @Override
@@ -156,7 +145,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // --- LOAD ITEMS ---
     private void loadItems() {
         dbManager.startListeningForItems(currentUserId, new FirestoreManager.FirestoreCallback() {
             @Override
@@ -164,11 +152,9 @@ public class MainActivity extends AppCompatActivity {
                 itemList.clear();
 
                 if (list.isEmpty()) {
-                    // Show empty message
                     tvEmptyMessage.setVisibility(android.view.View.VISIBLE);
                     listViewItems.setVisibility(android.view.View.GONE);
                 } else {
-                    // Sort by expiry date (closest first)
                     Collections.sort(list, new Comparator<Item>() {
                         @Override
                         public int compare(Item i1, Item i2) {
@@ -178,7 +164,6 @@ public class MainActivity extends AppCompatActivity {
 
                     itemList.addAll(list);
 
-                    // Show list
                     tvEmptyMessage.setVisibility(android.view.View.GONE);
                     listViewItems.setVisibility(android.view.View.VISIBLE);
                 }

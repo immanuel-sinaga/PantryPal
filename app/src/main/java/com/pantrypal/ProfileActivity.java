@@ -26,6 +26,7 @@ import com.pantrypal.model.FirestoreManager;
 
 public class ProfileActivity extends AppCompatActivity {
 
+    // FIELDS
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private FirestoreManager firestoreManager;
@@ -35,6 +36,7 @@ public class ProfileActivity extends AppCompatActivity {
     private Button btnUpdateName, btnUpdatePassword, btnDeleteAccount, btnLogout;
     private ImageButton btnClose;
 
+    // LIFECYCLE
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +49,7 @@ public class ProfileActivity extends AppCompatActivity {
             try {
                 padding = getResources().getDimensionPixelSize(R.dimen.login_padding);
             } catch (Exception e) {
-                // Default padding
+                // Ignore
             }
             v.setPadding(systemBars.left + padding, systemBars.top, systemBars.right + padding, systemBars.bottom);
             return insets;
@@ -68,6 +70,7 @@ public class ProfileActivity extends AppCompatActivity {
         setupListeners();
     }
 
+    // INITIALIZATION
     private void initializeViews() {
         btnClose = findViewById(R.id.btnClose);
         tvUserName = findViewById(R.id.tvUserName);
@@ -166,7 +169,6 @@ public class ProfileActivity extends AppCompatActivity {
         btnUpdatePassword.setEnabled(false);
         btnUpdatePassword.setText("Updating...");
 
-        // Re-authenticate user
         AuthCredential credential = EmailAuthProvider.getCredential(currentUser.getEmail(), currentPassword);
 
         currentUser.reauthenticate(credential)
@@ -195,7 +197,7 @@ public class ProfileActivity extends AppCompatActivity {
                 });
     }
 
-    // DELETE ACCOUNT CONFIRMATION
+    // DELETE ACCOUNT
     private void showDeleteAccountDialog() {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_delete_account, null);
         EditText etPasswordConfirm = dialogView.findViewById(R.id.etPasswordConfirm);
@@ -218,17 +220,14 @@ public class ProfileActivity extends AppCompatActivity {
                 .show();
     }
 
-    // DELETE ACCOUNT
     private void deleteAccount(String password) {
         AuthCredential credential = EmailAuthProvider.getCredential(currentUser.getEmail(), password);
 
         currentUser.reauthenticate(credential)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        // Delete all user's pantry items first
                         String userId = currentUser.getUid();
 
-                        // Then delete the Firebase account
                         currentUser.delete()
                                 .addOnCompleteListener(deleteTask -> {
                                     if (deleteTask.isSuccessful()) {

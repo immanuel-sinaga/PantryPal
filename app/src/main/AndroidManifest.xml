@@ -18,7 +18,7 @@
             android:exported="false" />
         <activity
             android:name=".RegisterActivity"
-            android:exported="false" /> <!-- CHANGE 1: This is now the Launcher (Entry Point) -->
+            android:exported="false" />
         <activity
             android:name=".LoginActivity"
             android:exported="true">
@@ -27,7 +27,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- CHANGE 2: Main Activity is no longer the launcher -->
+        </activity>
         <activity
             android:name=".MainActivity"
             android:exported="false" />
